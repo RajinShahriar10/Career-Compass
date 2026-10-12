@@ -3,6 +3,8 @@ import { generateJson } from "@/lib/gemini";
 import { CAREER_COACH_SYSTEM, roadmapPrompt } from "@/lib/prompts";
 import { buildFallbackRoadmap } from "@/lib/fallback";
 import { recommendScholarships, trackById } from "@/lib/assessment";
+import { insertEvent } from "@/lib/db";
+import { applyLearnerCookie, currentLearner } from "@/lib/learner";
 import type { Lang, Roadmap, SkillProfile } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -61,13 +63,27 @@ export async function POST(req: Request) {
     maxOutputTokens: 4096,
   });
 
+  let roadmap: Roadmap;
   if (isValid(data)) {
-    const roadmap = normalize(data, profile);
+    roadmap = normalize(data, profile);
     if (roadmap.scholarships.length === 0) {
       roadmap.scholarships = recommendScholarships(profile.goal, 6);
     }
-    return NextResponse.json({ roadmap });
+  } else {
+    roadmap = buildFallbackRoadmap(profile, lang);
   }
 
-  return NextResponse.json({ roadmap: buildFallbackRoadmap(profile, lang) });
+  const res = NextResponse.json({ roadmap });
+  try {
+    const { id, isNew } = await currentLearner();
+    await insertEvent(id, "roadmap_generated", {
+      career: roadmap.career,
+      trackId: profile.tracks[0],
+      demo: Boolean(roadmap.demo),
+    });
+    if (isNew) applyLearnerCookie(res, id);
+  } catch (err) {
+    console.error("[api/roadmap] logging failed", err);
+  }
+  return res;
 }

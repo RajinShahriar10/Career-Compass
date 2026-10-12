@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { generateJson } from "@/lib/gemini";
 import { resumePrompt } from "@/lib/prompts";
 import { fallbackResumeReview } from "@/lib/fallback";
+import { insertEvent } from "@/lib/db";
+import { applyLearnerCookie, currentLearner } from "@/lib/learner";
 import type { ResumeInput, ResumeReview } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -36,15 +38,25 @@ export async function POST(req: Request) {
     maxOutputTokens: 2000,
   });
 
-  if (isValid(data)) {
-    return NextResponse.json({
-      review: {
+  const review: ResumeReview = isValid(data)
+    ? {
         ...data,
         atsScore: Math.max(0, Math.min(100, Math.round(data.atsScore))),
         demo: false,
-      },
-    });
-  }
+      }
+    : fallbackResumeReview();
 
-  return NextResponse.json({ review: fallbackResumeReview() });
+  const res = NextResponse.json({ review });
+  try {
+    const { id, isNew } = await currentLearner();
+    await insertEvent(id, "resume_reviewed", {
+      targetRole: input.targetRole,
+      atsScore: review.atsScore,
+      demo: Boolean(review.demo),
+    });
+    if (isNew) applyLearnerCookie(res, id);
+  } catch (err) {
+    console.error("[api/resume] logging failed", err);
+  }
+  return res;
 }

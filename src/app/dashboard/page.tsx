@@ -11,7 +11,7 @@ const DONE_KEY = "skillsetu_done_v1";
 
 export default function DashboardPage() {
   const { pick } = useLang();
-  const { profile, roadmap, resumeReview, resetAssessment } = useAppData();
+  const { profile, roadmap, resumeReview, resetAssessment, sync } = useAppData();
   const [done, setDone] = useState<string[]>([]);
 
   useEffect(() => {
@@ -68,6 +68,29 @@ export default function DashboardPage() {
     { l: pick("ডিভাইস", "Device"), v: profile.device },
   ];
 
+  const syncInfo = {
+    synced: {
+      icon: "☁️",
+      title: pick("ক্লাউডে সংরক্ষিত", "Saved to cloud"),
+      sub: pick("Neon PostgreSQL ডাটাবেসে সিঙ্ক করা হয়েছে", "Synced to your Neon PostgreSQL database"),
+    },
+    saving: {
+      icon: "⏳",
+      title: pick("সিঙ্ক হচ্ছে…", "Syncing…"),
+      sub: pick("আপনার অগ্রগতি আপলোড হচ্ছে", "Uploading your progress"),
+    },
+    local: {
+      icon: "💾",
+      title: pick("শুধু এই ব্রাউজারে সংরক্ষিত", "Saved in this browser"),
+      sub: pick("ক্লাউড সিঙ্ক চালু করতে DATABASE_URL যোগ করুন", "Add DATABASE_URL to enable cloud sync"),
+    },
+    error: {
+      icon: "⚠️",
+      title: pick("সিঙ্ক ব্যর্থ", "Sync failed"),
+      sub: pick("অগ্রগতি লোকালে সংরক্ষিত আছে", "Your progress is still saved locally"),
+    },
+  }[sync];
+
   return (
     <div className="space-y-6">
       <div>
@@ -89,6 +112,14 @@ export default function DashboardPage() {
         <div className="mt-4 flex flex-wrap gap-6">
           <Ring value={roadmap?.matchScore ?? profile.scores[track.id] ?? 75} label={pick("ক্যারিয়ার ম্যাচ", "Career match")} />
           <Ring value={resumeReview?.atsScore ?? 0} label={pick("CV স্কোর", "CV score")} />
+        </div>
+      </section>
+
+      <section className="card flex items-center gap-3 p-4">
+        <span className="text-xl">{syncInfo.icon}</span>
+        <div>
+          <p className="text-sm font-bold text-ink">{syncInfo.title}</p>
+          <p className="text-xs text-muted">{syncInfo.sub}</p>
         </div>
       </section>
 
@@ -144,8 +175,7 @@ export default function DashboardPage() {
       <div className="grid gap-3 sm:grid-cols-2">
         <Link href="/roadmap" className="btn btn-primary">
           🗺️ {pick("রোডম্যাপ", "Roadmap")}
-        </Link>
-        <Link href="/resume" className="btn btn-ghost">
+        </Link>        <Link href="/resume" className="btn btn-ghost">
           📄 {pick("CV রিভিউ", "CV review")}
         </Link>
         <Link href="/interview" className="btn btn-ghost">

@@ -40,10 +40,12 @@ A mobile-first PWA that turns a confused student into a job-ready candidate:
 - **Framework:** Next.js 16 (App Router) + React 19 + TypeScript
 - **Styling:** Tailwind CSS v4 (custom design system)
 - **AI:** Google Gemini API — free tier (`gemini-2.5-flash`)
-- **State:** React context + `localStorage` (no cost, no backend required for the MVP)
+- **Database:** Neon serverless PostgreSQL (free tier) via `@neondatabase/serverless`
+- **State:** React context + `localStorage`, synced to Postgres (works offline without a DB)
 - **Hosting:** Vercel (free) · **Repo:** GitHub (free)
 
-> No paid services. The app even runs with **no API key** using a built-in demo mode.
+> No paid services. The app runs with **no API key** (demo mode) and **no database**
+> (browser-only storage), and upgrades to full cloud persistence the moment you add them.
 
 ## 4. AI integration
 
@@ -54,7 +56,30 @@ A mobile-first PWA that turns a confused student into a job-ready candidate:
 - If `GEMINI_API_KEY` is missing or a request fails, routes return curated
   fallback content and flag `demo: true` (shown as a badge in the UI).
 
-## 5. Run locally
+## 5. Database — Neon PostgreSQL (free)
+
+The app persists every learner's snapshot (assessment, profile, roadmap, CV review)
+to **Neon serverless Postgres**.
+
+1. Create a free project at [neon.tech](https://neon.tech).
+2. Copy the **pooled connection string**.
+3. Put it in `.env.local` (and in Vercel) as `DATABASE_URL`.
+4. That's it — tables are created automatically on first request
+   (`learners`, `saved_states`, `events`). The full schema also lives in
+   [`db/schema.sql`](db/schema.sql) if you prefer to run it manually.
+
+**How it works**
+
+- Each browser gets a long-lived anonymous `sks_learner` cookie (HTTP-only).
+- `GET /api/state` hydrates the app from Postgres; `POST /api/state` upserts it.
+- The client syncs on a short debounce, and falls back to `localStorage` if Neon is
+  unreachable. The dashboard shows the live sync status.
+- Every generated roadmap / CV / interview answer is appended to an `events` table
+  for analytics.
+
+> Identity is anonymous for now; a real auth layer can later map `auth.users` → `learners`.
+
+## 6. Run locally
 
 ```bash
 npm install
@@ -62,17 +87,18 @@ cp .env.example .env.local   # optional: add GEMINI_API_KEY
 npm run dev                  # http://localhost:3000
 ```
 
-## 6. Deploy to Vercel ($0)
+## 7. Deploy to Vercel ($0)
 
 1. Push this folder to a GitHub repository.
 2. On [vercel.com](https://vercel.com) → **Add New Project** → import the repo.
 3. Framework preset: **Next.js** (auto-detected). No build settings to change.
-4. Add environment variable `GEMINI_API_KEY` (from
-   [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)).
-   Optional: `GEMINI_MODEL`.
+4. Add environment variables:
+   - `GEMINI_API_KEY` — from [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+   - `DATABASE_URL` — your Neon pooled connection string
+   - *(optional)* `GEMINI_MODEL`
 5. **Deploy.** Done.
 
-## 7. Project structure
+## 8. Project structure
 
 ```
 src/
@@ -83,15 +109,18 @@ src/
     resume/             # AI CV review + ATS score
     interview/          # AI mock interview
     jobs/               # job & gig matching
-    dashboard/          # profile & progress
-    api/                # Gemini-powered route handlers
+    dashboard/          # profile, progress & cloud sync status
+    api/                # Gemini + Neon route handlers
+      state/            # GET/POST synced snapshot
   components/           # UI kit, app shell, providers
-  lib/                  # types, data, assessment, gemini, prompts, fallback
+  lib/                  # types, data, assessment, gemini, prompts, fallback, db
+db/
+  schema.sql            # Neon Postgres schema
 ```
 
-## 8. What's next (product phase)
+## 9. What's next (product phase)
 
-- Supabase auth + persistence (free tier) for cross-device profiles.
+- Real authentication (Neon + email magic link) for cross-device profiles.
 - Live job feeds and an employer dashboard.
 - Bangla voice mock interview (Web Speech API / Whisper).
 - RAG over a curated free-course library.
