@@ -1,20 +1,24 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { useLang } from "./LanguageProvider";
 
 export function Logo({ compact = false }: { compact?: boolean }) {
   const { pick } = useLang();
   return (
     <div className="flex items-center gap-2">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white text-lg shadow-sm">
-        সে
-      </span>
+      <Image
+        src="/paver-icon.png"
+        alt="Paver"
+        width={274}
+        height={274}
+        priority
+        className="h-9 w-9 rounded-xl"
+      />
       {!compact && (
         <span className="leading-tight">
-          <span className="block text-[15px] font-bold text-ink">
-            Skill {pick("সেতু", "Setu")}
-          </span>
+          <span className="block text-[15px] font-bold text-ink">Paver</span>
           <span className="block text-[11px] text-muted">
             {pick("ক্যারিয়ার কোপাইলট", "Career Copilot")}
           </span>
@@ -86,13 +90,13 @@ export function Ring({
     <div className="flex items-center gap-4">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e4eaef" strokeWidth={stroke} />
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={stroke} />
           <circle
             cx={size / 2}
             cy={size / 2}
             r={r}
             fill="none"
-            stroke="#0e9f6e"
+            stroke="#4f46e5"
             strokeWidth={stroke}
             strokeLinecap="round"
             strokeDasharray={c}

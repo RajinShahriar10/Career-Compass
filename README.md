@@ -1,9 +1,9 @@
-# 🌉 Skill সেতু (SkillSetu) — AI Career Copilot
+# 🌉 Paver — AI Career Copilot
 
 > An AI career copilot for Bangladeshi youth, built inside the **MyGP** ecosystem idea.
 > **Bangla-first · free · deployable on Vercel for $0.**
 
-Skill সেতু bridges the gap between *education* and *employment*. It assesses a young
+Paver paves the path between *education* and *employment*. It assesses a young
 person's skills, then generates a personalised career roadmap that includes
 **higher-education and scholarship guidance**, CV review, and mock interviews — all
 powered by Google Gemini.

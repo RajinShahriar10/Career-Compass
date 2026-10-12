@@ -19,10 +19,10 @@ const bengali = Noto_Sans_Bengali({
 });
 
 export const metadata: Metadata = {
-  title: "Skill সেতু — AI Career Copilot",
+  title: "Paver — AI Career Copilot",
   description:
-    "AI career copilot for Bangladeshi youth: skill assessment, personalised roadmap, higher-education & scholarship guidance, CV review and mock interviews. Bangla-first and free.",
-  applicationName: "Skill Setu",
+    "Paver is an AI career copilot for Bangladeshi youth: skill assessment, personalised roadmap, higher-education & scholarship guidance, CV review and mock interviews. Bangla-first and free.",
+  applicationName: "Paver",
   keywords: [
     "career",
     "skill",
@@ -32,11 +32,12 @@ export const metadata: Metadata = {
     "MyGP",
     "resume",
     "interview",
+    "Paver",
   ],
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e9f6e",
+  themeColor: "#4f46e5",
   width: "device-width",
   initialScale: 1,
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLang } from "@/components/LanguageProvider";
 import { useAppData } from "@/components/DataProvider";
 import { AiBadge } from "@/components/ui";
@@ -28,40 +29,58 @@ export default function Home() {
   return (
     <div className="space-y-8">
       {/* Hero */}
-      <section className="animate-rise">
-        <div className="mb-3 flex items-center gap-2">
+      <section className="animate-rise space-y-4">
+        <div className="flex items-center gap-2">
           <AiBadge />
         </div>
-        <h1 className="text-3xl font-extrabold leading-tight text-ink sm:text-4xl">
-          {pick(
-            "দক্ষতা থেকে ক্যারিয়ার — আপনার এআই কোপাইলট",
-            "From skills to career — your AI copilot"
-          )}
-        </h1>
-        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted">
-          {pick(
-            "বাংলাদেশের তরুণদের জন্য একটি সম্পূর্ণ ফ্রি প্ল্যাটফর্ম। আপনার স্কিল বুঝে AI বানিয়ে দেবে ব্যক্তিগত রোডম্যাপ, উচ্চশিক্ষা ও স্কলারশিপের পরামর্শ, CV রিভিউ এবং মক ইন্টারভিউ — সব বাংলায়।",
-            "A completely free platform for Bangladeshi youth. AI assesses your skills, then builds a personal roadmap, higher-education and scholarship guidance, CV review and mock interviews — all in Bangla."
-          )}
-        </p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link href={profile ? "/roadmap" : "/assess"} className="btn btn-primary">
-            {profile
-              ? pick("আমার রোডম্যাপ দেখুন", "View my roadmap")
-              : pick("ফ্রি শুরু করুন", "Start free")}
-          </Link>
-          <Link href="/jobs" className="btn btn-ghost">
-            {pick("চাকরি ব্রাউজ করুন", "Browse jobs")}
-          </Link>
+        <div className="hero-panel relative overflow-hidden rounded-2xl p-5 shadow-sm sm:p-6">
+          <span className="inline-flex rounded-xl bg-white px-3 py-2 shadow-sm">
+            <Image
+              src="/paver-logo.png"
+              alt="Paver"
+              width={743}
+              height={275}
+              priority
+              className="h-7 w-auto"
+            />
+          </span>
+          <h1 className="mt-4 text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+            {pick(
+              "দক্ষতা থেকে ক্যারিয়ার — আপনার এআই কোপাইলট",
+              "From skills to career — your AI copilot"
+            )}
+          </h1>
+          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-white/85">
+            {pick(
+              "বাংলাদেশের তরুণদের জন্য একটি সম্পূর্ণ ফ্রি প্ল্যাটফর্ম। আপনার স্কিল বুঝে AI বানিয়ে দেবে ব্যক্তিগত রোডম্যাপ, উচ্চশিক্ষা ও স্কলারশিপের পরামর্শ, CV রিভিউ এবং মক ইন্টারভিউ — সব বাংলায়।",
+              "A completely free platform for Bangladeshi youth. AI assesses your skills, then builds a personal roadmap, higher-education and scholarship guidance, CV review and mock interviews — all in Bangla."
+            )}
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href={profile ? "/roadmap" : "/assess"}
+              className="btn bg-white text-brand-strong hover:bg-white/90"
+            >
+              {profile
+                ? pick("আমার রোডম্যাপ দেখুন", "View my roadmap")
+                : pick("ফ্রি শুরু করুন", "Start free")}
+            </Link>
+            <Link
+              href="/jobs"
+              className="btn border border-white/40 text-white hover:bg-white/10"
+            >
+              {pick("চাকরি ব্রাউজ করুন", "Browse jobs")}
+            </Link>
+          </div>
         </div>
-        <div className="mt-6 grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { k: "৯", l: pick("ক্যারিয়ার ট্র্যাক", "Career tracks") },
             { k: "১৪+", l: pick("স্কলারশিপ", "Scholarships") },
             { k: "০৳", l: pick("সম্পূর্ণ ফ্রি", "Totally free") },
           ].map((s) => (
             <div key={s.k} className="card p-3 text-center">
-              <div className="text-xl font-extrabold text-brand">{s.k}</div>
+              <div className="text-gradient text-xl font-extrabold">{s.k}</div>
               <div className="text-[11px] font-medium text-muted">{s.l}</div>
             </div>
           ))}
@@ -120,17 +139,20 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="card bg-brand-soft p-5 text-center">
-        <h2 className="text-lg font-bold text-ink">
+      <section className="hero-panel rounded-2xl p-5 text-center shadow-sm">
+        <h2 className="text-lg font-bold text-white">
           {pick("আজই শুরু করুন — কোনো খরচ নেই", "Start today — it costs nothing")}
         </h2>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-sm text-white/85">
           {pick(
             "মাত্র ২ মিনিটে আপনার ক্যারিয়ার পথ জানুন।",
             "Know your career path in just 2 minutes."
           )}
         </p>
-        <Link href="/assess" className="btn btn-primary mt-4">
+        <Link
+          href="/assess"
+          className="btn mt-4 bg-white text-brand-strong hover:bg-white/90"
+        >
           {pick("স্কিল টেস্ট দিন", "Take the skill test")}
         </Link>
       </section>

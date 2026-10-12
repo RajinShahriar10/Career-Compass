@@ -1,4 +1,4 @@
--- ── Skill সেতু / Career Compass — Neon Postgres schema ──────────────
+-- ── Paver — Neon Postgres schema ────────────────────────────────────
 -- Paste this into the Neon SQL Editor, or let the app auto-create it.
 -- The app also runs CREATE TABLE IF NOT EXISTS on first use.
 

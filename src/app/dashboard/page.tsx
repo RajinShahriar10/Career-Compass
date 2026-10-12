@@ -140,7 +140,7 @@ export default function DashboardPage() {
                     type="checkbox"
                     checked={done.includes(s)}
                     onChange={() => toggle(s)}
-                    className="h-4 w-4 accent-[#0e9f6e]"
+                    className="h-4 w-4 accent-[#4f46e5]"
                   />
                   <span
                     className={`text-sm font-medium ${
