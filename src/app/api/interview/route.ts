@@ -3,7 +3,11 @@ import { generateJson } from "@/lib/gemini";
 import { interviewPrompt } from "@/lib/prompts";
 import { fallbackInterview } from "@/lib/fallback";
 import { insertEvent } from "@/lib/db";
-import { applyLearnerCookie, currentLearner } from "@/lib/learner";
+import {
+  applyLearnerCookie,
+  currentLearner,
+  isSecureRequest,
+} from "@/lib/learner";
 import type { InterviewResponse, Lang } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -57,7 +61,7 @@ export async function POST(req: Request) {
       score: result.score,
       demo: Boolean(result.demo),
     });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
   } catch (err) {
     console.error("[api/interview] logging failed", err);
   }

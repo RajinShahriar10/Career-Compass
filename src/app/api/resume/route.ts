@@ -3,7 +3,11 @@ import { generateJson } from "@/lib/gemini";
 import { resumePrompt } from "@/lib/prompts";
 import { fallbackResumeReview } from "@/lib/fallback";
 import { insertEvent } from "@/lib/db";
-import { applyLearnerCookie, currentLearner } from "@/lib/learner";
+import {
+  applyLearnerCookie,
+  currentLearner,
+  isSecureRequest,
+} from "@/lib/learner";
 import type { ResumeInput, ResumeReview } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -54,7 +58,7 @@ export async function POST(req: Request) {
       atsScore: review.atsScore,
       demo: Boolean(review.demo),
     });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
   } catch (err) {
     console.error("[api/resume] logging failed", err);
   }

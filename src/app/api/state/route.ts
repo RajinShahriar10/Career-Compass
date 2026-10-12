@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { dbReady, loadState, saveState, upsertLearner } from "@/lib/db";
-import { applyLearnerCookie, currentLearner } from "@/lib/learner";
+import {
+  applyLearnerCookie,
+  currentLearner,
+  isSecureRequest,
+} from "@/lib/learner";
 
 export const maxDuration = 30;
 
@@ -11,7 +15,7 @@ interface StateBody {
 }
 
 /** Load the synced snapshot for this learner (or report that DB is off). */
-export async function GET() {
+export async function GET(req: Request) {
   if (!dbReady) {
     return NextResponse.json({ configured: false, state: null });
   }
@@ -19,7 +23,7 @@ export async function GET() {
     const { id, isNew } = await currentLearner();
     const state = await loadState(id);
     const res = NextResponse.json({ configured: true, state });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
     return res;
   } catch (err) {
     console.error("[api/state] GET failed", err);
@@ -44,12 +48,12 @@ export async function POST(req: Request) {
     await upsertLearner(id, body.language, body.goal);
     await saveState(id, body.state ?? {});
     const res = NextResponse.json({ configured: true, saved: true });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
     return res;
   } catch (err) {
     console.error("[api/state] POST failed", err);
     const res = NextResponse.json({ configured: true, saved: false, error: true });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
     return res;
   }
 }

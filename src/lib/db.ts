@@ -96,6 +96,8 @@ export async function insertEvent(
 ): Promise<void> {
   if (!sql) return;
   await ensureSchema();
+  // Guarantee the parent learner row exists (events.learner_id has an FK).
+  await upsertLearner(id);
   await sql`
     insert into events (learner_id, type, payload)
     values (${id}::uuid, ${type}, ${JSON.stringify(payload)}::jsonb)

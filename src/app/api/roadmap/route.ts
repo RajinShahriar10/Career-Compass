@@ -4,7 +4,11 @@ import { CAREER_COACH_SYSTEM, roadmapPrompt } from "@/lib/prompts";
 import { buildFallbackRoadmap } from "@/lib/fallback";
 import { recommendScholarships, trackById } from "@/lib/assessment";
 import { insertEvent } from "@/lib/db";
-import { applyLearnerCookie, currentLearner } from "@/lib/learner";
+import {
+  applyLearnerCookie,
+  currentLearner,
+  isSecureRequest,
+} from "@/lib/learner";
 import type { Lang, Roadmap, SkillProfile } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -81,7 +85,7 @@ export async function POST(req: Request) {
       trackId: profile.tracks[0],
       demo: Boolean(roadmap.demo),
     });
-    if (isNew) applyLearnerCookie(res, id);
+    if (isNew) applyLearnerCookie(res, id, isSecureRequest(req));
   } catch (err) {
     console.error("[api/roadmap] logging failed", err);
   }
